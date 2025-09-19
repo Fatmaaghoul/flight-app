@@ -1,0 +1,33 @@
+[
+    {
+      "villeDepart": "Paris",
+      "villeArrivee": "Djerba",
+      "dateDepart": "2025-09-20T08:00:00",
+      "dateArrivee": "2025-09-20T11:00:00",
+      "prix": 150,
+      "tempsTrajet": 180,
+      "capacite": 180,
+      "placesDisponibles": 180
+    },
+    {
+      "villeDepart": "Tunis",
+      "villeArrivee": "Rome",
+      "dateDepart": "2025-09-22T09:30:00",
+      "dateArrivee": "2025-09-22T11:00:00",
+      "prix": 120,
+      "tempsTrajet": 90,
+      "capacite": 150,
+      "placesDisponibles": 150
+    },
+    {
+      "villeDepart": "Marseille",
+      "villeArrivee": "Djerba",
+      "dateDepart": "2025-09-25T14:00:00",
+      "dateArrivee": "2025-09-25T16:30:00",
+      "prix": 200,
+      "tempsTrajet": 150,
+      "capacite": 200,
+      "placesDisponibles": 200
+    }
+  ]
+  

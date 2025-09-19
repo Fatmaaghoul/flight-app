@@ -1,0 +1,190 @@
+<div class="flyscanner-container">
+ 
+  <header class="flyscanner-header">
+    <div class="header-container">
+      <div class="logo">
+        <span class="logo-icon">✈️</span>
+        <h1>FlightMaj</h1>
+      </div>
+      <nav class="nav-menu">
+        <a href="#" class="nav-item active">Vols</a>
+        <button (click)="openAdmin()" class="nav-item">Administration</button>
+
+
+      </nav>
+    </div>
+  </header>
+
+  <div class="hero-banner">
+    <div class="hero-content">
+      <h2>Réservez votre vol au meilleur prix</h2>
+      <p>Comparez des millions de vols et trouvez l'offre idéale</p>
+    </div>
+  </div>
+
+  
+  <main class="main-content">
+    <div class="search-panel">
+      <div class="search-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Ville de départ</label>
+            <input type="text" [(ngModel)]="villeDepart" placeholder="Ex: Paris">
+          </div>
+          <div class="form-group">
+            <label>Ville d'arrivée</label>
+            <input type="text" [(ngModel)]="villeArrivee" placeholder="Ex: Lyon">
+          </div>
+        </div>
+
+<div class="form-row">
+  <div class="form-group">
+    <label>Date de départ</label>
+    <div class="calendar-dropdown">
+      <div class="dropdown-trigger" (click)="toggleCalendar('depart')">
+        <span>{{ dateDepart ? (dateDepart | date:'dd/MM/yyyy') : 'Sélectionner' }}</span>
+        <span class="dropdown-arrow">▼</span>
+      </div>
+      <div class="dropdown-content" *ngIf="showCalendar === 'depart'">
+        <app-calendar 
+        (dateSelected)="onDateSelected($event, 'depart')"
+        (closeCalendar)="closeCalendar()">
+      </app-calendar>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Date de retour</label>
+    <div class="calendar-dropdown">
+      <div class="dropdown-trigger" (click)="toggleCalendar('retour')">
+        <span>{{ dateArrivee ? (dateArrivee | date:'dd/MM/yyyy') : 'Sélectionner' }}</span>
+        <span class="dropdown-arrow">▼</span>
+      </div>
+      <div class="dropdown-content" *ngIf="showCalendar === 'retour'">
+        <app-calendar 
+        (dateSelected)="onDateSelected($event, 'retour')"
+        (closeCalendar)="closeCalendar()">
+      </app-calendar>
+      </div>
+    </div>
+  </div>
+</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Trier par</label>
+            <select [(ngModel)]="tri">
+              <option value="prix">Prix</option>
+              <option value="temps">Durée</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <button class="search-btn" (click)="searchVols()">
+              Rechercher
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-container">
+      <div *ngIf="loading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Recherche des meilleures offres...</p>
+      </div>
+
+      <div *ngIf="error" class="error-state">
+        <div class="error-icon">⚠️</div>
+        <h3>Une erreur est survenue</h3>
+        <p>{{ error }}</p>
+        <button class="retry-btn" (click)="searchVols()">Réessayer la recherche</button>
+      </div>
+
+      <div *ngIf="!loading && !error" class="results-content">
+        <div class="results-header">
+          <h2>Vols disponibles</h2>
+          <span class="results-count">{{ vols.length }} résultats</span>
+        </div>
+
+        <div *ngIf="vols.length === 0" class="empty-state">
+          <div class="empty-icon">🔍</div>
+          <h3>Aucun vol trouvé</h3>
+          <p>Modifiez vos critères de recherche pour afficher plus de résultats</p>
+        </div>
+
+        <div class="flights-list">
+          <div *ngFor="let vol of vols" class="flight-item">
+            <div class="flight-main">
+              <div class="flight-info">
+                <div class="cities">
+                  <span class="city">{{ vol.villeDepart }}</span>
+                  <div class="flight-separator">
+                    <div class="line"></div>
+                    <div class="plane">→</div>
+                  </div>
+                  <span class="city">{{ vol.villeArrivee }}</span>
+                </div>
+                <div class="flight-times">
+                  <span class="time">{{ formatDate(vol.dateDepart).split(' ')[1] }}</span>
+                  <span class="duration">{{ formatDuration(vol.tempsTrajet) }}</span>
+                  <span class="time">{{ formatDate(vol.dateArrivee).split(' ')[1] }}</span>
+                </div>
+              </div>
+
+              <div class="flight-price">
+                <div class="price">{{ vol.prix }} DT</div>
+                <div class="price-info">TTC par personne</div>
+              </div>
+            </div>
+
+            <div class="flight-details">
+              <div class="details-list">
+                <div class="detail">
+                  <span class="label">Départ:</span>
+                  <span class="value">{{ formatDate(vol.dateDepart) }}</span>
+                </div>
+                <div class="detail">
+                  <span class="label">Arrivée:</span>
+                  <span class="value">{{ formatDate(vol.dateArrivee) }}</span>
+                </div>
+                <div class="detail">
+                  <span class="label">Durée:</span>
+                  <span class="value">{{ formatDuration(vol.tempsTrajet) }}</span>
+                </div>
+                <div class="detail">
+                  <span class="label">Places:</span>
+                  <span class="value" [class.low]="vol.placesDisponibles < 10">
+                    {{ vol.placesDisponibles }} restantes
+                  </span>
+                </div>
+              </div>
+
+              <button class="book-button" 
+                      (click)="reserveVol(vol)"
+                      [class.disabled]="vol.placesDisponibles === 0">
+                {{ vol.placesDisponibles === 0 ? 'COMPLET' : 'Réserver' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="flyscanner-footer">
+    <div class="footer-content">
+      <p>© 2024 FlightM - Comparez et réservez vos vols au meilleur prix</p>
+    </div>
+  </footer>
+<app-reservation 
+*ngIf="showReservationModal"
+[vol]="selectedVol"
+(reservationComplete)="onReservationComplete()"
+(close)="closeReservationModal()">
+</app-reservation>
+<app-admin 
+  *ngIf="showAdmin"
+  (close)="closeAdmin()">
+</app-admin>
+</div>

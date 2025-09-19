@@ -1,0 +1,13 @@
+# Maven / Java 
+target/
+*.log
+*.class
+*.jar
+*.war
+*.db
+
+#Node / Angular
+node_modules/
+dist/
+.angular/
+.cache/

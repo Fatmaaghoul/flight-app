@@ -1,0 +1,24 @@
+<div class="calendar">
+    <div class="header">
+      <button (click)="prevMonth()">&lt;</button>
+      <span>{{ currentMonth + 1 }}/{{ currentYear }}</span>
+      <button (click)="nextMonth()">&gt;</button>
+    </div>
+    
+    <div class="weekdays">
+      <span *ngFor="let d of ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']">{{ d }}</span>
+    </div>
+    
+    <div class="weeks">
+      <div class="week" *ngFor="let week of weeks">
+        <div class="day"
+             *ngFor="let day of week"
+             [class.today]="isToday(day!)"
+             [class.selected]="isSelected(day!)"
+             [class.empty]="!day"
+             (click)="selectDate(day!)">
+          {{ day?.getDate() }}
+        </div>
+      </div>
+    </div>
+  </div>

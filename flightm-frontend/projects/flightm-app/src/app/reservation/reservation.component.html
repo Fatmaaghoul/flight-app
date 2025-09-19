@@ -1,0 +1,85 @@
+<div class="reservation-modal">
+    <div class="modal-overlay" (click)="closeModal()"></div>
+    
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Réserver votre vol</h2>
+        <button class="close-btn" (click)="closeModal()">×</button>
+      </div>
+  
+      <div class="vol-info">
+        <h3>{{ vol.villeDepart }} → {{ vol.villeArrivee }}</h3>
+        <p>Départ: {{ vol.dateDepart | date:'dd/MM/yyyy à HH:mm' }}</p>
+        <p>Arrivée: {{ vol.dateArrivee | date:'dd/MM/yyyy à HH:mm' }}</p>
+        <p>Prix: <strong>{{ vol.prix * reservationData.nombrePlaces }} DT</strong> 
+           ({{ vol.prix }} DT × {{ reservationData.nombrePlaces }})</p>
+        <p>Places disponibles: {{ vol.placesDisponibles }}</p>
+      </div>
+  
+      <form (ngSubmit)="submitReservation()" class="reservation-form">
+        <div class="form-group">
+          <label>Nom complet *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="reservationData.nomClient" 
+            name="nomClient"
+            placeholder="Votre nom complet"
+            required>
+        </div>
+  
+        <div class="form-group">
+          <label>Email *</label>
+          <input 
+            type="email" 
+            [(ngModel)]="reservationData.emailClient" 
+            name="emailClient"
+            placeholder="votre@email.com"
+            required>
+        </div>
+  
+        <div class="form-group">
+          <label>Téléphone</label>
+          <input 
+            type="tel" 
+            [(ngModel)]="reservationData.telephone" 
+            name="telephone"
+            placeholder="+215 56 123 345">
+        </div>
+  
+        <div class="form-group">
+          <label>Nombre de places *</label>
+          <select 
+            [(ngModel)]="reservationData.nombrePlaces" 
+            name="nombrePlaces"
+            [disabled]="vol.placesDisponibles === 0">
+            <option *ngFor="let n of getAvailablePlaces()" [value]="n">
+              {{ n }} place(s)
+            </option>
+          </select>
+        </div>
+  
+        <div *ngIf="error" class="error-message">
+          {{ error }}
+        </div>
+  
+        <div class="modal-actions">
+          <button 
+            type="button" 
+            class="btn-cancel" 
+            (click)="closeModal()">
+            Annuler
+          </button>
+          
+          <button 
+            type="submit" 
+            class="btn-confirm"
+            [disabled]="loading || vol.placesDisponibles === 0">
+            <span *ngIf="!loading">
+              {{ vol.placesDisponibles === 0 ? 'COMPLET' : 'Confirmer la réservation' }}
+            </span>
+            <span *ngIf="loading">Traitement...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
